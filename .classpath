@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="args4j-2.0.6.jar"/>
-	<classpathentry kind="lib" path="guava-16.0.1.jar"/>
+	<classpathentry kind="lib" path="libs/args4j-2.0.6.jar"/>
+	<classpathentry kind="lib" path="libs/guava-16.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
