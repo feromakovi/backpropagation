@@ -3,6 +3,7 @@ package sk.feromakovi.backpropagation;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
@@ -25,18 +26,18 @@ public class Main {
     private String mTest;
 	
 	@Option(name="-rate")     
-    private double mLearningRate = -1;
+    public double mLearningRate = -1;
 	
 	@Option(name="-momentum")     
-    private double mMomentum = -1;
+    public double mMomentum = -1;
 	
 	@Option(name="-n")     
-    private int mHiddenNeurons = 2;
+    public int mHiddenNeurons = 2;
 	
 	@Option(name="-h")     
     private boolean mHelp = false;
 	
-	private List<Data> mData = new ArrayList<Data>();
+	public List<Data> mData = new ArrayList<Data>();
 	
 	public void loadData(){
 		try{
@@ -48,8 +49,6 @@ public class Main {
 		}	
 		//for(Data d : mData) log(d.toString());
 	}
-	
-	public List<Data> getData(){return this.mData;}
 	
 	public Main(String[] args){
 		CmdLineParser parser = new CmdLineParser(this);
@@ -84,6 +83,15 @@ public class Main {
 		Main main = new Main(args);
 		main.check();
 		main.loadData();	
-		Network net = new Network(main.getData());
+		Network net = new Network(main.mData, main.mHiddenNeurons, main.mLearningRate, main.mMomentum);
+		int maxRuns = 500000;
+		double minErrorCondition = 0.01;
+		net.run(maxRuns, minErrorCondition);
+	}
+	
+	static Random random = new Random();
+	
+	public static double generateRandom(){
+		return (random.nextDouble() - 0.5);
 	}
 }

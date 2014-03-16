@@ -18,6 +18,14 @@ public class Data {
 		for(int i = 0; i < outs.length; i++)
 			out[i] = Double.parseDouble(outs[i]);
 	}
+	
+	public double getPartialError(double[] res){
+		double error = 0;
+		for (int i = 0; i < res.length; i++) {
+			error += Math.pow((res[i] - out[i]), 2);
+		}
+		return error;
+	}
 
 	@Override
 	public String toString() {
