@@ -167,6 +167,8 @@ public class Network {
 					error += data.getPartialError(output);
 					applyBackpropagation(data.out);
 				}
+				error = (error)/(mData.size());
+				Main.log("epoch: " + i + "   error: " + error);
 				
 //				for (int p = 0; p < inputs.length; p++) {
 //					setInput(inputs[p]);
