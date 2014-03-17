@@ -99,19 +99,23 @@ public class Network {
 		 */
 		public void applyBackpropagation(double expectedOutput[]) {
 			int i = 0;
+			
+			
+//			wi = wi + ( learningRate * delta * Xi + ( momentum * stara_zmena_vah ) ) 
+//			pre vahu biasu: 
+//			wi = wi + ( learningRate * delta )
 			for (Neuron n : outputLayer) {
 				ArrayList<Connection> connections = n.getAllInConnections();
-				for (Connection con : connections) {
-					double ak = n.getOutput();
-					double ai = con.leftNeuron.getOutput();
-					double desiredOutput = expectedOutput[i];
-
-					double partialDerivative = ak * (1 - ak) * ai
-							* (desiredOutput - ak);
-					double deltaWeight = learningRate * partialDerivative;
+				double ak = n.getOutput();
+				double desiredOutput = expectedOutput[i];
+				double partialDerivative = ak * (1 - ak) * (desiredOutput - ak);//delta
+				
+				for (Connection con : connections) {					
+					double ai = con.leftNeuron.getOutput();				
+					double deltaWeight = (learningRate * ai * partialDerivative + (momentum * con.getPrevDeltaWeight()));
 					double newWeight = con.getWeight() + deltaWeight;
 					con.setDeltaWeight(deltaWeight);
-					con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
+					con.setWeight(newWeight);
 				}
 				i++;
 			}

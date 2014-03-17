@@ -8,7 +8,7 @@ public class Neuron {
 	final public int id;  // auto increment, starts at 0
 	double output;
 	
-	final double threshold = 1;
+	final double threshold = -1;
 	double weigth;
 	
 	ArrayList<Connection> Inconnections = new ArrayList<Connection>();

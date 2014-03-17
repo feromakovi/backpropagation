@@ -4,7 +4,6 @@ public class Connection {
 	
 	double weight = 0;
 	double prevDeltaWeight = 0; // for momentum
-	double deltaWeight = 0;
 
 	final Neuron leftNeuron;
 	final Neuron rightNeuron;
@@ -28,8 +27,7 @@ public class Connection {
 	}
 
 	public void setDeltaWeight(double w) {
-		prevDeltaWeight = deltaWeight;
-		deltaWeight = w;
+		prevDeltaWeight = w;
 	}
 
 	public double getPrevDeltaWeight() {
