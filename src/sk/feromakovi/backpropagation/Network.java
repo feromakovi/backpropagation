@@ -127,8 +127,7 @@ public class Network {
 					double desiredOutput = (double) expectedOutput[j];
 					double ak = out_neu.getOutput();
 					j++;
-					sumKoutputs = sumKoutputs
-							+ ((desiredOutput - ak) * ak * (1 - ak) * wjk);
+					sumKoutputs += ((desiredOutput - ak) * ak * (1 - ak) * wjk);
 				}
 				double aj = n.getOutput();
 				double partialDerivative = aj * (1 - aj) * sumKoutputs;
@@ -163,21 +162,6 @@ public class Network {
 				error = (error)/(mData.size());
 				Main.log("epoch: " + i + "   error: " + error);
 				
-//				for (int p = 0; p < inputs.length; p++) {
-//					setInput(inputs[p]);
-//
-//					activate();
-//
-//					output = getOutput();
-//					resultOutputs[p] = output;
-//
-//					for (int j = 0; j < expectedOutputs[p].length; j++) {
-//						double err = Math.pow(output[j] - expectedOutputs[p][j], 2);
-//						error += err;
-//					}
-//
-//					applyBackpropagation(expectedOutputs[p]);
-//				}
 			}
 
 			printResult();
