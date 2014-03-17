@@ -9,7 +9,7 @@ public class Neuron {
 	double output;
 	
 	final double threshold = -1;
-	double weigth;
+	private double weigth;
 	
 	ArrayList<Connection> Inconnections = new ArrayList<Connection>();
 	HashMap<Integer,Connection> connectionLookup = new HashMap<Integer,Connection>();
@@ -66,4 +66,10 @@ public class Neuron {
 	public void setOutput(double o){
 		output = o;
 	}
+	
+	public void setWeight(double weight){
+		this.weigth = weight;
+	}
+	
+	public double getWeight(){return this.weigth;}
 }

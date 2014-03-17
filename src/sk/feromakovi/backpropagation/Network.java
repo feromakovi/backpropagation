@@ -117,6 +117,7 @@ public class Network {
 					con.setDeltaWeight(deltaWeight);
 					con.setWeight(newWeight);
 				}
+				n.setWeight(n.getWeight() + (learningRate * partialDerivative));
 				i++;
 			}
 
