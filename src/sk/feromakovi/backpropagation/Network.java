@@ -102,7 +102,7 @@ public class Network {
 			for (Neuron n : outputLayer) {
 				ArrayList<Connection> connections = n.getAllInConnections();
 				double ak = n.getOutput();
-				double desiredOutput = expectedOutput[i];
+				double desiredOutput = (double) expectedOutput[i];
 				double partialDerivative = ak * (1 - ak) * (desiredOutput - ak);
 				for (Connection con : connections) {
 					
@@ -119,26 +119,29 @@ public class Network {
 			// update weights for the hidden layer
 			for (Neuron n : hiddenLayer) {
 				ArrayList<Connection> connections = n.getAllInConnections();
-				for (Connection con : connections) {
-					double aj = n.getOutput();
+				
+				double sumKoutputs = 0;
+				int j = 0;
+				for (Neuron out_neu : outputLayer) {
+					double wjk = out_neu.getConnection(n.id).getWeight();
+					double desiredOutput = (double) expectedOutput[j];
+					double ak = out_neu.getOutput();
+					j++;
+					sumKoutputs = sumKoutputs
+							+ ((desiredOutput - ak) * ak * (1 - ak) * wjk);
+				}
+				double aj = n.getOutput();
+				double partialDerivative = aj * (1 - aj) * sumKoutputs;
+				
+				for (Connection con : connections) {					
 					double ai = con.leftNeuron.getOutput();
-					double sumKoutputs = 0;
-					int j = 0;
-					for (Neuron out_neu : outputLayer) {
-						double wjk = out_neu.getConnection(n.id).getWeight();
-						double desiredOutput = (double) expectedOutput[j];
-						double ak = out_neu.getOutput();
-						j++;
-						sumKoutputs = sumKoutputs
-								+ ((desiredOutput - ak) * ak * (1 - ak) * wjk);
-					}
-
-					double partialDerivative = aj * (1 - aj) * ai * sumKoutputs;
-					double deltaWeight = learningRate * partialDerivative;
+					
+					double deltaWeight = (learningRate * partialDerivative * ai) + (momentum * con.getPrevDeltaWeight());
 					double newWeight = con.getWeight() + deltaWeight;
 					con.setDeltaWeight(deltaWeight);
 					con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
 				}
+				n.weigth += (learningRate * partialDerivative);				
 			}
 		}
 
