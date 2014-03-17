@@ -106,16 +106,7 @@ public class Network {
 		 */
 		public void applyBackpropagation(double expectedOutput[]) {
 
-			// error check, normalize value ]0;1[
-			for (int i = 0; i < expectedOutput.length; i++) {
-				double d = expectedOutput[i];
-				if (d < 0 || d > 1) {
-					if (d < 0)
-						expectedOutput[i] = 0 + epsilon;
-					else
-						expectedOutput[i] = 1 - epsilon;
-				}
-			}
+			
 
 			int i = 0;
 			for (Neuron n : outputLayer) {
@@ -125,9 +116,9 @@ public class Network {
 					double ai = con.leftNeuron.getOutput();
 					double desiredOutput = expectedOutput[i];
 
-					double partialDerivative = -ak * (1 - ak) * ai
+					double partialDerivative = ak * (1 - ak) * ai
 							* (desiredOutput - ak);
-					double deltaWeight = -learningRate * partialDerivative;
+					double deltaWeight = learningRate * partialDerivative;
 					double newWeight = con.getWeight() + deltaWeight;
 					con.setDeltaWeight(deltaWeight);
 					con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
@@ -149,11 +140,11 @@ public class Network {
 						double ak = out_neu.getOutput();
 						j++;
 						sumKoutputs = sumKoutputs
-								+ (-(desiredOutput - ak) * ak * (1 - ak) * wjk);
+								+ ((desiredOutput - ak) * ak * (1 - ak) * wjk);
 					}
 
 					double partialDerivative = aj * (1 - aj) * ai * sumKoutputs;
-					double deltaWeight = -learningRate * partialDerivative;
+					double deltaWeight = learningRate * partialDerivative;
 					double newWeight = con.getWeight() + deltaWeight;
 					con.setDeltaWeight(deltaWeight);
 					con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
@@ -204,6 +195,7 @@ public class Network {
 				printAllWeights();
 				printWeightUpdate();
 			}
+			System.out.println("pocet generacii: "+i);
 		}
 		
 		void printResult()

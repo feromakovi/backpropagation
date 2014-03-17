@@ -7,7 +7,7 @@ public class Neuron {
 	static int counter = 0;
 	final public int id;  // auto increment, starts at 0
 	Connection biasConnection;
-	final double bias = -1;
+	final double bias = 1.0f;
 	double output;
 	
 	ArrayList<Connection> Inconnections = new ArrayList<Connection>();
