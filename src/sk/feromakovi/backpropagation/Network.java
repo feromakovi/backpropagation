@@ -17,12 +17,7 @@ public class Network {
 	final ArrayList<Neuron> inputLayer = new ArrayList<Neuron>();
 	final ArrayList<Neuron> hiddenLayer = new ArrayList<Neuron>();
 	final ArrayList<Neuron> outputLayer = new ArrayList<Neuron>();
-	final Neuron bias = new Neuron();
 	final int[] layers;
-	final int randomWeightMultiplier = 1;
-
-	final double epsilon = 0.00000000001;
-
 	final double learningRate;
 	final double momentum;
 	
@@ -45,14 +40,12 @@ public class Network {
 		for(int i = 0; i < hiddenNeuronCount; i++){
 			Neuron neuron = new Neuron();
 			neuron.addInConnectionsS(inputLayer);
-			neuron.addBiasConnection(bias);
 			hiddenLayer.add(neuron);
 		}
 		
 		for(int i = 0; i < d.out.length; i++){
 			Neuron neuron = new Neuron();
 			neuron.addInConnectionsS(hiddenLayer);
-			neuron.addBiasConnection(bias);
 			outputLayer.add(neuron);
 		}
 
@@ -105,9 +98,6 @@ public class Network {
 		 *            bias is also updated here
 		 */
 		public void applyBackpropagation(double expectedOutput[]) {
-
-			
-
 			int i = 0;
 			for (Neuron n : outputLayer) {
 				ArrayList<Connection> connections = n.getAllInConnections();

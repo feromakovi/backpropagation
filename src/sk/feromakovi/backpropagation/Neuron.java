@@ -6,14 +6,16 @@ import java.util.HashMap;
 public class Neuron {
 	static int counter = 0;
 	final public int id;  // auto increment, starts at 0
-	Connection biasConnection;
-	final double bias = 1.0f;
 	double output;
+	
+	final double threshold = 1;
+	double weigth;
 	
 	ArrayList<Connection> Inconnections = new ArrayList<Connection>();
 	HashMap<Integer,Connection> connectionLookup = new HashMap<Integer,Connection>();
 	
-	public Neuron(){		
+	public Neuron(){	
+		this.weigth = Main.generateRandom();
 		id = counter;
 		counter++;
 	}
@@ -28,10 +30,9 @@ public class Neuron {
 			double weight = con.getWeight();
 			double a = leftNeuron.getOutput(); //output from previous layer
 			
-			s += (weight*a);
+			s += (weight * a);
 		}
-		s = s + (biasConnection.getWeight()*bias);
-		
+		s += (weigth * threshold);
 		output = sigmoid(s);
 	}
 
@@ -54,18 +55,11 @@ public class Neuron {
 	public void addInConnection(Connection con){
 		Inconnections.add(con);
 	}
-	public void addBiasConnection(Neuron n){
-		Connection con = new Connection(n,this);
-		biasConnection = con;
-		Inconnections.add(con);
-	}
+	
 	public ArrayList<Connection> getAllInConnections(){
 		return Inconnections;
 	}
 	
-	public double getBias() {
-		return bias;
-	}
 	public double getOutput() {
 		return output;
 	}
