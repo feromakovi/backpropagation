@@ -101,18 +101,18 @@ public class Network {
 			int i = 0;
 			for (Neuron n : outputLayer) {
 				ArrayList<Connection> connections = n.getAllInConnections();
+				double ak = n.getOutput();
+				double desiredOutput = expectedOutput[i];
+				double partialDerivative = ak * (1 - ak) * (desiredOutput - ak);
 				for (Connection con : connections) {
-					double ak = n.getOutput();
-					double ai = con.leftNeuron.getOutput();
-					double desiredOutput = expectedOutput[i];
-
-					double partialDerivative = ak * (1 - ak) * ai
-							* (desiredOutput - ak);
-					double deltaWeight = learningRate * partialDerivative;
+					
+					double ai = con.leftNeuron.getOutput();					
+					double deltaWeight = (learningRate * partialDerivative * ai) + (momentum * con.getPrevDeltaWeight());
 					double newWeight = con.getWeight() + deltaWeight;
 					con.setDeltaWeight(deltaWeight);
-					con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
+					con.setWeight(newWeight);//+ momentum * con.getPrevDeltaWeight()
 				}
+				n.weigth += (partialDerivative * learningRate);
 				i++;
 			}
 
