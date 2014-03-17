@@ -97,7 +97,7 @@ public class Network {
 		 *            respect to each of the weight leading into the output neurons
 		 *            bias is also updated here
 		 */
-		public void applyBackpropagation(double expectedOutput[]) {
+		public void applyBackpropagation(final double expectedOutput[]) {
 			int i = 0;
 			
 			
@@ -122,28 +122,40 @@ public class Network {
 			}
 
 			// update weights for the hidden layer
+			
+			/*
+			 * 3. error skrytej vrstvy 
+- ziskas delty vystupnych (mas z predchadzajuceho kroku) 
+- pre kazdy skryty neuron ( existuje tu spojenie na kazdy vystupny neuron) 
+sum(error = delta[i] * w[i]) i = i-ty neuron outputu 
+a tato suma je error pre tento konkretny skryty neuron 
+4. delta neuronov skrytej vrstvy 
+pre kazdy skryty neuron ( yk * ( 1 - yk ) * e ) || yk = output, e = error z predchadzajuceho kroku 
+
+			 */
 			for (Neuron n : hiddenLayer) {
 				ArrayList<Connection> connections = n.getAllInConnections();
-				for (Connection con : connections) {
-					double aj = n.getOutput();
-					double ai = con.leftNeuron.getOutput();
-					double sumKoutputs = 0;
-					int j = 0;
-					for (Neuron out_neu : outputLayer) {
-						double wjk = out_neu.getConnection(n.id).getWeight();
-						double desiredOutput = (double) expectedOutput[j];
-						double ak = out_neu.getOutput();
-						j++;
-						sumKoutputs = sumKoutputs
-								+ ((desiredOutput - ak) * ak * (1 - ak) * wjk);
-					}
-
-					double partialDerivative = aj * (1 - aj) * ai * sumKoutputs;
-					double deltaWeight = learningRate * partialDerivative;
+				
+				double sumKoutputs = 0;
+				int j = 0;
+				for (Neuron out_neu : outputLayer) {
+					double wjk = out_neu.getConnection(n.id).getWeight();
+					double desiredOutput = (double) expectedOutput[j];
+					double ak = out_neu.getOutput();
+					j++;
+					sumKoutputs += ((desiredOutput - ak) * ak * (1 - ak) * wjk);
+				}
+				
+				double aj = n.getOutput();
+				double partialDerivative = aj * (1 - aj) * sumKoutputs;//sumKoutputs je error pre neuron v skrytej vrstve
+				for (Connection con : connections) {					
+					double ai = con.leftNeuron.getOutput();						
+					double deltaWeight = learningRate * partialDerivative * ai + (momentum * con.getPrevDeltaWeight());
 					double newWeight = con.getWeight() + deltaWeight;
 					con.setDeltaWeight(deltaWeight);
-					con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
+					con.setWeight(newWeight);
 				}
+				n.setWeight(n.getWeight() + (learningRate * partialDerivative));
 			}
 		}
 
