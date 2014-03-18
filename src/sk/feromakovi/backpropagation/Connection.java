@@ -6,7 +6,6 @@ public class Connection implements Serializable{
 	
 	double weight = 0;
 	double prevDeltaWeight = 0; // for momentum
-	
 
 	final Neuron leftNeuron;
 	final Neuron rightNeuron;
@@ -31,7 +30,6 @@ public class Connection implements Serializable{
 
 	public void setDeltaWeight(double w) {
 		prevDeltaWeight = w;
-		
 	}
 
 	public double getPrevDeltaWeight() {
