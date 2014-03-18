@@ -10,6 +10,8 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
+import sk.feromakovi.backpropagation.utils.Serializers;
+
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -31,8 +33,14 @@ public class Main {
 	@Option(name="-momentum")     
     public double mMomentum = -1;
 	
+	@Option(name="-minerror")     
+    public double mMinError = 0.01;
+	
 	@Option(name="-n")     
     public int mHiddenNeurons = 2;
+	
+	@Option(name="-maxiter")     
+    public int mMaxIter = 10000;
 	
 	@Option(name="-h")     
     private boolean mHelp = false;
@@ -70,6 +78,8 @@ public class Main {
 		System.out.println("    [-test] testovacie data");
 		System.out.println("    [-rate] learning rate");
 		System.out.println("    [-momentum] momentum");
+		System.out.println("    [-minerror] minimal error when program can stop");
+		System.out.println("    [-maxiter] max iteration count");
 		System.out.println("    [-n] pocet neuronov v skrytej vrstve");
 		System.out.println("    [-h] help");
 		System.exit(0);
@@ -82,11 +92,16 @@ public class Main {
 	public static void main(String[] args) {
 		Main main = new Main(args);
 		main.check();
-		main.loadData();	
-		Network net = new Network(main.mData, main.mHiddenNeurons, main.mLearningRate, main.mMomentum);
-		int maxRuns = 500000;
-		double minErrorCondition = 0.01;
-		net.run(maxRuns, minErrorCondition);
+		main.loadData();
+		File netFile = new File("learned.dat");
+		Network net;
+		if(netFile.exists())
+			net = Serializers.loadFromFile(netFile);
+		else
+			net = new Network(main.mData, main.mHiddenNeurons, main.mLearningRate, main.mMomentum);
+		boolean learnt = net.run(main.mMaxIter, main.mMinError);
+		if(learnt)
+			Serializers.saveToFile(netFile, net);
 	}
 	
 	static Random random = new Random();
