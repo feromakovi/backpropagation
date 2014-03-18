@@ -1,7 +1,6 @@
 package sk.feromakovi.backpropagation;
 
 import java.io.Serializable;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,20 +10,17 @@ public class Network implements Serializable {
 	List<Data> mData;
 
 	final boolean isTrained = false;
-	final DecimalFormat df = new DecimalFormat("#.0#");
 	final ArrayList<Neuron> inputLayer = new ArrayList<Neuron>();
 	final ArrayList<Neuron> hiddenLayer = new ArrayList<Neuron>();
 	final ArrayList<Neuron> outputLayer = new ArrayList<Neuron>();
 	double learningRate;
 	double momentum;
+	double epsilon;
 
-	public Network(List<Data> data, int hiddenNeuronCount, double learningRate,
-			double momentum) {
+	public Network(List<Data> data, int hiddenNeuronCount) {
 		this.mData = data;
 		Data d = data.get(0);
-		this.learningRate = learningRate;
-		this.momentum = momentum;
-
+		
 		for (int i = 0; i < d.in.length; i++) {
 			Neuron neuron = new Neuron();
 			inputLayer.add(neuron);
@@ -126,78 +122,101 @@ public class Network implements Serializable {
 				error += data.getPartialError(output);
 				applyBackpropagation(data.out);
 			}
+			double hit = calculateHit();
 			error = (error) / (mData.size());
-			Main.log("epoch: " + i + "   error: " + error);
+			Main.log("epoch: " + i + "   data hit: " + hit + "   min squared error: " + error);
 		}
-		printResult();
 
-		System.out.println("Sum of squared errors = " + error);
-		System.out.println("pocet generacii: " + i);
 		if (i == maxSteps) {
 			System.out.println("!Error training try again");
 		} else {
-			printAllWeights();
-			printWeightUpdate();
+//			printAllWeights();
+//			printWeightUpdate();
 			return true;
 		}
 		return false;
 	}
-
-	private void printResult() {
-		System.out.println("NN example with xor training");
-		for (Data d : mData) {
-			System.out.print("INPUTS: ");
-			for (int x = 0; x < inputLayer.size(); x++) {
-				System.out.print(d.in[x] + " ");
+	
+	private double calculateHit(){
+		double hit = 0;
+		for(Data d : mData){
+			setInput(d.in);
+			activate();
+			double[] o = getOutput();
+			int c = 0;
+			for(int i = 0; i < o.length; i++){
+				if(normalised(o[i]) == d.out[i])
+					c++;
 			}
-
-			System.out.print("EXPECTED: ");
-			for (int x = 0; x < outputLayer.size(); x++) {
-				System.out.print(d.out[x] + " ");
-			}
-			System.out.println();
+			if(c == o.length)
+				hit = hit + 1;
 		}
-		System.out.println();
+		return ((hit / mData.size()) * 100);
+	}
+	
+	private double normalised(double d){
+		if(d <= Math.abs(0 - epsilon))
+			return 0;
+		else if(d >= Math.abs(1 - epsilon))
+			return 1;
+		return d;
 	}
 
-	private void printWeightUpdate() {
-		System.out
-				.println("printWeightUpdate, put this i trainedWeights() and set isTrained to true");
-		for (Neuron n : hiddenLayer) {
-			ArrayList<Connection> connections = n.getAllInConnections();
-			for (Connection con : connections) {
-				String w = df.format(con.getWeight());
-				System.out.println("weightUpdate.put(weightKey(" + n.id + ", " + con.id + "), " + w + ");");
-			}
-		}
-		for (Neuron n : outputLayer) {
-			ArrayList<Connection> connections = n.getAllInConnections();
-			for (Connection con : connections) {
-				String w = df.format(con.getWeight());
-				System.out.println("weightUpdate.put(weightKey(" + n.id + ", " + con.id + "), " + w + ");");
-			}
-		}
-		System.out.println();
-	}
+//	private void printResult() {
+//		System.out.println("NN example with xor training");
+//		for (Data d : mData) {
+//			System.out.print("INPUTS: ");
+//			for (int x = 0; x < inputLayer.size(); x++) {
+//				System.out.print(d.in[x] + " ");
+//			}
+//
+//			System.out.print("EXPECTED: ");
+//			for (int x = 0; x < outputLayer.size(); x++) {
+//				System.out.print(d.out[x] + " ");
+//			}
+//			System.out.println();
+//		}
+//		System.out.println();
+//	}
 
-	private void printAllWeights() {
-		System.out.println("printAllWeights");
-		for (Neuron n : hiddenLayer) {
-			ArrayList<Connection> connections = n.getAllInConnections();
-			for (Connection con : connections) {
-				double w = con.getWeight();
-				System.out.println("n=" + n.id + " c=" + con.id + " w=" + w);
-			}
-		}
-		for (Neuron n : outputLayer) {
-			ArrayList<Connection> connections = n.getAllInConnections();
-			for (Connection con : connections) {
-				double w = con.getWeight();
-				System.out.println("n=" + n.id + " c=" + con.id + " w=" + w);
-			}
-		}
-		System.out.println();
-	}
+//	private void printWeightUpdate() {
+//		System.out
+//				.println("printWeightUpdate, put this i trainedWeights() and set isTrained to true");
+//		for (Neuron n : hiddenLayer) {
+//			ArrayList<Connection> connections = n.getAllInConnections();
+//			for (Connection con : connections) {
+//				String w = df.format(con.getWeight());
+//				System.out.println("weightUpdate.put(weightKey(" + n.id + ", " + con.id + "), " + w + ");");
+//			}
+//		}
+//		for (Neuron n : outputLayer) {
+//			ArrayList<Connection> connections = n.getAllInConnections();
+//			for (Connection con : connections) {
+//				String w = df.format(con.getWeight());
+//				System.out.println("weightUpdate.put(weightKey(" + n.id + ", " + con.id + "), " + w + ");");
+//			}
+//		}
+//		System.out.println();
+//	}
+//
+//	private void printAllWeights() {
+//		System.out.println("printAllWeights");
+//		for (Neuron n : hiddenLayer) {
+//			ArrayList<Connection> connections = n.getAllInConnections();
+//			for (Connection con : connections) {
+//				double w = con.getWeight();
+//				System.out.println("n=" + n.id + " c=" + con.id + " w=" + w);
+//			}
+//		}
+//		for (Neuron n : outputLayer) {
+//			ArrayList<Connection> connections = n.getAllInConnections();
+//			for (Connection con : connections) {
+//				double w = con.getWeight();
+//				System.out.println("n=" + n.id + " c=" + con.id + " w=" + w);
+//			}
+//		}
+//		System.out.println();
+//	}
 
 	public void setLearningRate(double learningRate) {
 		this.learningRate = learningRate;
@@ -205,5 +224,9 @@ public class Network implements Serializable {
 
 	public void setMomentum(double momentum) {
 		this.momentum = momentum;
+	}
+
+	public void setEpsilon(double mEpsilon) {
+		this.epsilon = mEpsilon;
 	}
 }
