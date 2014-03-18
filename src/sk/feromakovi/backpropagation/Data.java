@@ -1,6 +1,8 @@
 package sk.feromakovi.backpropagation;
 
-public class Data {
+import java.io.Serializable;
+
+public class Data implements Serializable{
 	
 	public double[] in;
 	public double[] out;

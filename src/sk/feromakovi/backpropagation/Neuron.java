@@ -1,10 +1,11 @@
 package sk.feromakovi.backpropagation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Neuron {
-	static int counter = 0;
+public class Neuron implements Serializable{
+	transient static int counter = 0;
 	final public int id;  // auto increment, starts at 0
 	double output;
 	

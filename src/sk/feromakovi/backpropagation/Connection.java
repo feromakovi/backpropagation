@@ -1,6 +1,8 @@
 package sk.feromakovi.backpropagation;
 
-public class Connection {
+import java.io.Serializable;
+
+public class Connection implements Serializable{
 	
 	double weight = 0;
 	double prevDeltaWeight = 0; // for momentum
@@ -8,7 +10,7 @@ public class Connection {
 
 	final Neuron leftNeuron;
 	final Neuron rightNeuron;
-	static int counter = 0;
+	transient static int counter = 0;
 	final public int id; // auto increment, starts at 0
 
 	public Connection(Neuron fromN, Neuron toN) {
