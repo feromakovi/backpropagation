@@ -1,0 +1,3 @@
+Iris-versicolor - 1;0
+Iris-virginica - 0;0
+Iris-setosa - 0;1
