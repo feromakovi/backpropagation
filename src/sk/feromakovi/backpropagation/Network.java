@@ -59,14 +59,14 @@ public class Network implements Serializable {
 		return outputs;
 	}
 
-	public void activate() {
+	private void activate() {
 		for (Neuron n : hiddenLayer)
 			n.calculateOutput();
 		for (Neuron n : outputLayer)
 			n.calculateOutput();
 	}
 
-	public void applyBackpropagation(double expectedOutput[]) {
+	private void applyBackpropagation(double expectedOutput[]) {
 		int i = 0;
 		for (Neuron n : outputLayer) {
 			ArrayList<Connection> connections = n.getAllInConnections();
@@ -74,20 +74,17 @@ public class Network implements Serializable {
 			double desiredOutput = (double) expectedOutput[i];
 			double partialDerivative = ak * (1 - ak) * (desiredOutput - ak);
 			for (Connection con : connections) {
-
 				double ai = con.leftNeuron.getOutput();
 				double deltaWeight = (learningRate * partialDerivative * ai)
 						+ (momentum * con.getPrevDeltaWeight());
 				double newWeight = con.getWeight() + deltaWeight;
 				con.setDeltaWeight(deltaWeight);
-				con.setWeight(newWeight);// + momentum *
-											// con.getPrevDeltaWeight()
+				con.setWeight(newWeight);
 			}
 			n.weigth += (partialDerivative * learningRate);
 			i++;
 		}
 
-		// update weights for the hidden layer
 		for (Neuron n : hiddenLayer) {
 			ArrayList<Connection> connections = n.getAllInConnections();
 
@@ -106,8 +103,7 @@ public class Network implements Serializable {
 			for (Connection con : connections) {
 				double ai = con.leftNeuron.getOutput();
 
-				double deltaWeight = (learningRate * partialDerivative * ai)
-						+ (momentum * con.getPrevDeltaWeight());
+				double deltaWeight = (learningRate * partialDerivative * ai) + (momentum * con.getPrevDeltaWeight());
 				double newWeight = con.getWeight() + deltaWeight;
 				con.setDeltaWeight(deltaWeight);
 				con.setWeight(newWeight + momentum * con.getPrevDeltaWeight());
@@ -116,9 +112,8 @@ public class Network implements Serializable {
 		}
 	}
 
-	boolean run(int maxSteps, double minError) {
+	public boolean run(int maxSteps, double minError) {
 		int i;
-		// Train neural network until minError reached or maxSteps exceeded
 		double error = 1;
 		for (i = 0; i < maxSteps && error > minError; i++) {
 			error = 0;
@@ -133,14 +128,11 @@ public class Network implements Serializable {
 			}
 			error = (error) / (mData.size());
 			Main.log("epoch: " + i + "   error: " + error);
-
 		}
-
 		printResult();
 
 		System.out.println("Sum of squared errors = " + error);
 		System.out.println("pocet generacii: " + i);
-		// System.out.println("##### EPOCH " + i+"\n");
 		if (i == maxSteps) {
 			System.out.println("!Error training try again");
 		} else {
@@ -151,9 +143,9 @@ public class Network implements Serializable {
 		return false;
 	}
 
-	void printResult() {
+	private void printResult() {
 		System.out.println("NN example with xor training");
-		for (Data d : mData) {// for (int p = 0; p < inputs.length; p++) {
+		for (Data d : mData) {
 			System.out.print("INPUTS: ");
 			for (int x = 0; x < inputLayer.size(); x++) {
 				System.out.print(d.in[x] + " ");
@@ -163,43 +155,33 @@ public class Network implements Serializable {
 			for (int x = 0; x < outputLayer.size(); x++) {
 				System.out.print(d.out[x] + " ");
 			}
-
-			// System.out.print("ACTUAL: ");
-			// for (int x = 0; x < layers[2]; x++) {
-			// //System.out.print(resultOutputs[p][x] + " ");
-			// }
 			System.out.println();
 		}
 		System.out.println();
 	}
 
-	public void printWeightUpdate() {
+	private void printWeightUpdate() {
 		System.out
 				.println("printWeightUpdate, put this i trainedWeights() and set isTrained to true");
-		// weights for the hidden layer
 		for (Neuron n : hiddenLayer) {
 			ArrayList<Connection> connections = n.getAllInConnections();
 			for (Connection con : connections) {
 				String w = df.format(con.getWeight());
-				System.out.println("weightUpdate.put(weightKey(" + n.id + ", "
-						+ con.id + "), " + w + ");");
+				System.out.println("weightUpdate.put(weightKey(" + n.id + ", " + con.id + "), " + w + ");");
 			}
 		}
-		// weights for the output layer
 		for (Neuron n : outputLayer) {
 			ArrayList<Connection> connections = n.getAllInConnections();
 			for (Connection con : connections) {
 				String w = df.format(con.getWeight());
-				System.out.println("weightUpdate.put(weightKey(" + n.id + ", "
-						+ con.id + "), " + w + ");");
+				System.out.println("weightUpdate.put(weightKey(" + n.id + ", " + con.id + "), " + w + ");");
 			}
 		}
 		System.out.println();
 	}
 
-	public void printAllWeights() {
+	private void printAllWeights() {
 		System.out.println("printAllWeights");
-		// weights for the hidden layer
 		for (Neuron n : hiddenLayer) {
 			ArrayList<Connection> connections = n.getAllInConnections();
 			for (Connection con : connections) {
@@ -207,7 +189,6 @@ public class Network implements Serializable {
 				System.out.println("n=" + n.id + " c=" + con.id + " w=" + w);
 			}
 		}
-		// weights for the output layer
 		for (Neuron n : outputLayer) {
 			ArrayList<Connection> connections = n.getAllInConnections();
 			for (Connection con : connections) {

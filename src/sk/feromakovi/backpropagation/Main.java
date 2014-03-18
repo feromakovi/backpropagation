@@ -27,6 +27,9 @@ public class Main {
 	@Option(name="-test")     
     private String mTest;
 	
+	@Option(name="-state")     
+    private String mState = null;
+	
 	@Option(name="-rate")     
     public double mLearningRate = -1;
 	
@@ -69,13 +72,14 @@ public class Main {
 	}
 	
 	public void check(){
-		if(mTrain == null || mHelp || mLearningRate == -1 || mMomentum == -1)
+		if((mTrain == null && mTest == null) || mHelp || mLearningRate == -1 || mMomentum == -1)
 			printHelp();
 	}
 	
 	void printHelp(){
 		System.out.println("    [-train] trenovacie data");
 		System.out.println("    [-test] testovacie data");
+		System.out.println("    [-state] file saving/loading neural network state");
 		System.out.println("    [-rate] learning rate");
 		System.out.println("    [-momentum] momentum");
 		System.out.println("    [-minerror] minimal error when program can stop");
