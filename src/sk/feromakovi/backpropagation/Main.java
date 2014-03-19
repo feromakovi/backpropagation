@@ -97,9 +97,11 @@ public class Main {
 		main.check();
 		main.loadData();
 		Network net;
-		
+		boolean test = false;
 		if(main.mState != null && new File(main.mState).exists()){
 			net = Serializers.loadFromFile(new File(main.mState));
+			net.setData(main.mData);
+			test = true;
 		}else{
 			net = new Network(main.mData, main.mHiddenNeurons);
 		}
@@ -107,9 +109,13 @@ public class Main {
 		net.setLearningRate(main.mLearningRate);
 		net.setMomentum(main.mMomentum);
 		net.setEpsilon(main.mEpsilon);
-		boolean learnt = net.run(main.mMaxIter, main.mMinError);
-		if(learnt && main.mState != null && !new File(main.mState).exists())
-			Serializers.saveToFile(new File(main.mState), net);
+		if(test){
+			net.calculateHit(true);
+		}else{
+			boolean learnt = net.run(main.mMaxIter, main.mMinError);
+			if(learnt && main.mState != null && !new File(main.mState).exists())
+				Serializers.saveToFile(new File(main.mState), net);
+		}
 	}
 	
 	static Random random = new Random();

@@ -122,27 +122,26 @@ public class Network implements Serializable {
 				error += data.getPartialError(output);
 				applyBackpropagation(data.out);
 			}
-			double hit = calculateHit();
+			double hit = calculateHit(false);
 			error = (error) / (mData.size());
-			Main.log("epoch: " + i + "   data hit: " + hit + "   min squared error: " + error);
+			Main.log("epoch: " + i + "   data hit: " + hit + "%   min squared error: " + error);
 		}
 
 		if (i == maxSteps) {
 			System.out.println("!Error training try again");
 		} else {
-//			printAllWeights();
-//			printWeightUpdate();
 			return true;
 		}
 		return false;
 	}
 	
-	private double calculateHit(){
-		double hit = 0;
+	public double calculateHit(boolean log){
+		double hit = 0, error = 0;
 		for(Data d : mData){
 			setInput(d.in);
 			activate();
 			double[] o = getOutput();
+			error += d.getPartialError(o);
 			int c = 0;
 			for(int i = 0; i < o.length; i++){
 				if(normalised(o[i]) == d.out[i])
@@ -151,7 +150,11 @@ public class Network implements Serializable {
 			if(c == o.length)
 				hit = hit + 1;
 		}
-		return ((hit / mData.size()) * 100);
+		error /= (mData.size());
+		double percent = ((hit / mData.size()) * 100); 
+		if(log)
+			Main.log("data hit: " + percent + "%   min squared error: " + error);
+		return percent;
 	}
 	
 	private double normalised(double d){
@@ -161,62 +164,6 @@ public class Network implements Serializable {
 			return 1;
 		return d;
 	}
-
-//	private void printResult() {
-//		System.out.println("NN example with xor training");
-//		for (Data d : mData) {
-//			System.out.print("INPUTS: ");
-//			for (int x = 0; x < inputLayer.size(); x++) {
-//				System.out.print(d.in[x] + " ");
-//			}
-//
-//			System.out.print("EXPECTED: ");
-//			for (int x = 0; x < outputLayer.size(); x++) {
-//				System.out.print(d.out[x] + " ");
-//			}
-//			System.out.println();
-//		}
-//		System.out.println();
-//	}
-
-//	private void printWeightUpdate() {
-//		System.out
-//				.println("printWeightUpdate, put this i trainedWeights() and set isTrained to true");
-//		for (Neuron n : hiddenLayer) {
-//			ArrayList<Connection> connections = n.getAllInConnections();
-//			for (Connection con : connections) {
-//				String w = df.format(con.getWeight());
-//				System.out.println("weightUpdate.put(weightKey(" + n.id + ", " + con.id + "), " + w + ");");
-//			}
-//		}
-//		for (Neuron n : outputLayer) {
-//			ArrayList<Connection> connections = n.getAllInConnections();
-//			for (Connection con : connections) {
-//				String w = df.format(con.getWeight());
-//				System.out.println("weightUpdate.put(weightKey(" + n.id + ", " + con.id + "), " + w + ");");
-//			}
-//		}
-//		System.out.println();
-//	}
-//
-//	private void printAllWeights() {
-//		System.out.println("printAllWeights");
-//		for (Neuron n : hiddenLayer) {
-//			ArrayList<Connection> connections = n.getAllInConnections();
-//			for (Connection con : connections) {
-//				double w = con.getWeight();
-//				System.out.println("n=" + n.id + " c=" + con.id + " w=" + w);
-//			}
-//		}
-//		for (Neuron n : outputLayer) {
-//			ArrayList<Connection> connections = n.getAllInConnections();
-//			for (Connection con : connections) {
-//				double w = con.getWeight();
-//				System.out.println("n=" + n.id + " c=" + con.id + " w=" + w);
-//			}
-//		}
-//		System.out.println();
-//	}
 
 	public void setLearningRate(double learningRate) {
 		this.learningRate = learningRate;
@@ -228,5 +175,9 @@ public class Network implements Serializable {
 
 	public void setEpsilon(double mEpsilon) {
 		this.epsilon = mEpsilon;
+	}
+
+	public void setData(List<Data> data) {
+		this.mData = data;
 	}
 }
