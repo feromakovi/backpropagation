@@ -18,6 +18,8 @@ import com.google.common.io.Files;
 
 public class Main {
 	
+	static Random random = new Random();
+
 	@Argument
     private List<String> mArguments = new ArrayList<String>();
 	
@@ -117,8 +119,6 @@ public class Main {
 				Serializers.saveToFile(new File(main.mState), net);
 		}
 	}
-	
-	static Random random = new Random();
 	
 	public static double generateRandom(){
 		return (random.nextDouble() - 0.5);

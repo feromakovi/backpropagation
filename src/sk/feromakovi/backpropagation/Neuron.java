@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class Neuron implements Serializable{
 	transient static int counter = 0;
-	final public int id;  // auto increment, starts at 0
+	final public int id;
 	double output;
 	
 	final double threshold = 1;
@@ -21,16 +21,12 @@ public class Neuron implements Serializable{
 		counter++;
 	}
 	
-	/**
-	 * Compute Sj = Wij*Aij + w0j*bias
-	 */
 	public void calculateOutput(){
 		double s = 0;
 		for(Connection con : Inconnections){
 			Neuron leftNeuron = con.getFromNeuron();
 			double weight = con.getWeight();
-			double a = leftNeuron.getOutput(); //output from previous layer
-			
+			double a = leftNeuron.getOutput();
 			s += (weight * a);
 		}
 		s += (weigth * threshold);

@@ -7,10 +7,10 @@ public class Connection implements Serializable{
 	transient static int counter = 0;
 	
 	double weight = 0;
-	double prevDeltaWeight = 0; // for momentum	
+	double prevDeltaWeight = 0;
 	final Neuron leftNeuron;
 	final Neuron rightNeuron;
-	final public int id; // auto increment, starts at 0
+	final public int id;
 
 	public Connection(Neuron fromN, Neuron toN) {
 		leftNeuron = fromN;
